@@ -69,8 +69,6 @@ public class ImgHeader {
 						// Write the image to the output file.
 						File outputFile = new File(file.getParent(), "output_" + file.getName());
 
-
-
 						if (ImageIO.write(newImage, format, outputFile)) {
 							// Increment the transformed image count
 							transformedImageCount.incrementAndGet();

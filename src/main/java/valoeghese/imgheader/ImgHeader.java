@@ -97,12 +97,10 @@ public class ImgHeader {
 		File[] files = Objects.requireNonNull(rootDirectory.listFiles(), "File is not a directory.");
 
 		for (File file : files) {
-			String nextPath = currentPath + "/" + file.getName();
-
 			if (file.isDirectory()) {
-				recursivelyApply(file, nextPath, consumer);
+				recursivelyApply(file, currentPath + file.getName() + "/", consumer);
 			} else {
-				consumer.accept(nextPath, file);
+				consumer.accept(currentPath + file.getName(), file);
 			}
 		}
 	}

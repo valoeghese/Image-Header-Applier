@@ -37,8 +37,8 @@ public class ImgHeader {
 			AtomicInteger transformedImageCount = new AtomicInteger(0);
 			long startTime = System.nanoTime();
 
-			recursivelyApply(currentDirectory, file -> {
-				if (imagesSelected.matcher(file.getName()).matches()) {
+			recursivelyApply(currentDirectory, "", (path, file) -> {
+				if (imagesSelected.matcher(path).matches()) {
 					System.out.println("Transforming " + file.getName());
 
 					try {
@@ -72,17 +72,22 @@ public class ImgHeader {
 	/**
 	 * Recursively apply a consumer to all files in a directory.
 	 * @param rootDirectory the root directory to search for files in.
-	 * @param consumer the consumer to apply.
+	 * @param currentPath the current path relative to the initial path.
+	 * @param consumer the consumer to apply. Accepts the current path of the file relative to the initial path
+	 *                 and the file object itself.
 	 * @throws IOException if an error occurs while interacting with the file system.
 	 */
-	private static void recursivelyApply(File rootDirectory, IOConsumer<File> consumer) throws IOException {
+	private static void recursivelyApply(File rootDirectory, String currentPath,
+										 IOBiConsumer<String, File> consumer) throws IOException {
 		File[] files = Objects.requireNonNull(rootDirectory.listFiles(), "File is not a directory.");
 
 		for (File file : files) {
+			String nextPath = currentPath + "/" + file.getName();
+
 			if (file.isDirectory()) {
-				recursivelyApply(file, consumer);
+				recursivelyApply(file, nextPath, consumer);
 			} else {
-				consumer.accept(file);
+				consumer.accept(nextPath, file);
 			}
 		}
 	}

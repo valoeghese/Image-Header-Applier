@@ -48,15 +48,28 @@ public class ImgHeader {
 					System.out.println("Transforming " + file.getName());
 
 					try {
+						String format = getExtension(file);
+
+						// jpg is jpeg
+						if ("jpeg".equals(format)) {
+							format = "jpg";
+						}
+
 						// Read and transform the image.
 						BufferedImage image = ImageIO.read(file);
-						BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight() + header.getHeight(), BufferedImage.TYPE_INT_ARGB);
+						BufferedImage newImage = new BufferedImage(
+								image.getWidth(),
+								image.getHeight() + header.getHeight(),
+								"jpg".equals(format) ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB
+						);
+
 						newImage.getGraphics().drawImage(header, 0, 0, null);
 						newImage.getGraphics().drawImage(image, 0, header.getHeight(), null);
 
 						// Write the image to the output file.
 						File outputFile = new File(file.getParent(), "output_" + file.getName());
-						String format = getExtension(outputFile);
+
+
 
 						if (ImageIO.write(newImage, format, outputFile)) {
 							// Increment the transformed image count

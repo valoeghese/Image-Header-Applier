@@ -17,7 +17,7 @@ public class ImgHeader {
 		// Check correct number of arguments.
 		if (args.length != 2) {
 			System.err.println("Invalid number of arguments." +
-					"Usage: java -jar imgheader.jar [image file regex] [header image file]");
+					" Usage: java -jar imgheader.jar [image file regex] [header image file]");
 			return;
 		}
 

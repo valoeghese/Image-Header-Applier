@@ -42,14 +42,23 @@ public class ImgHeader {
 					System.out.println("Transforming " + file.getName());
 
 					try {
+						// Read and transform the image.
 						BufferedImage image = ImageIO.read(file);
 						BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight() + header.getHeight(), BufferedImage.TYPE_INT_ARGB);
 						newImage.getGraphics().drawImage(header, 0, 0, null);
 						newImage.getGraphics().drawImage(image, 0, header.getHeight(), null);
-						ImageIO.write(newImage, "png", file);
 
-						// Increment the transformed image count
-						transformedImageCount.incrementAndGet();
+						// Write the image to the output file.
+						File outputFile = new File(file.getParent(), "output_" + file.getName());
+						String format = getExtension(outputFile);
+
+						if (ImageIO.write(newImage, format, outputFile)) {
+							// Increment the transformed image count
+							transformedImageCount.incrementAndGet();
+						} else {
+							// Inform user about the format issue.
+							System.err.println("Unknown or unsupported format " + format);
+						}
 					} catch (IOException e) {
 						System.err.println("Error transforming image \"" + file.getName() + "\": " + e.getMessage());
 					}
@@ -90,5 +99,21 @@ public class ImgHeader {
 				consumer.accept(nextPath, file);
 			}
 		}
+	}
+
+	/**
+	 * Get the extension of a file.
+	 * @param file the file to get the extension of.
+	 * @return the extension of the file.
+	 */
+	private static String getExtension(File file) {
+		String name = file.getName();
+		int lastIndexOf = name.lastIndexOf(".");
+
+		if (lastIndexOf == -1) {
+			return ""; // no extension
+		}
+
+		return name.substring(lastIndexOf + 1);
 	}
 }
